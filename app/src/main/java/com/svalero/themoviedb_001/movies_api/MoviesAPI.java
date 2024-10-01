@@ -1,5 +1,6 @@
 package com.svalero.themoviedb_001.movies_api;
 
+import com.svalero.themoviedb_001.json_mapper.Movie;
 import com.svalero.themoviedb_001.json_mapper.MovieResponse;
 
 import retrofit2.Call;
@@ -10,4 +11,6 @@ public interface MoviesAPI {
     @GET("movie/popular?api_key=a4baafc5fd87ddc79d6c8548a8559b9d")
     Call<MovieResponse> getPopularMovies();
 
+    @GET("search/movie?a4baafc5fd87ddc79d6c8548a8559b9d")
+    Call<MovieResponse> searchMovies(String apiKey);
 }

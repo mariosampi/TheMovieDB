@@ -7,13 +7,37 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
+    <!-- Campo de texto para ingresar el término de búsqueda -->
+    <EditText
+        android:id="@+id/textSearch"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Buscar película"
+        android:inputType="text"
+        android:padding="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="16dp" />
+
+    <!-- Botón para buscar películas por el término ingresado -->
+    <Button
+        android:id="@+id/btnSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Buscar"
+        app:layout_constraintTop_toBottomOf="@id/textSearch"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_margin="16dp" />
+
+    <!-- Botón original para mostrar las películas populares -->
+    <Button
+        android:id="@+id/btnGetPopular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Películas Populares"
+        app:layout_constraintTop_toBottomOf="@id/btnSearch"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="16dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
