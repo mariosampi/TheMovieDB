@@ -1,43 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:orientation="vertical"
+    android:padding="16dp"
+    >
 
-    <!-- Campo de texto para ingresar el término de búsqueda -->
-    <EditText
-        android:id="@+id/textSearch"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Buscar película"
-        android:inputType="text"
-        android:padding="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_margin="16dp" />
-
-    <!-- Botón para buscar películas por el término ingresado -->
     <Button
-        android:id="@+id/btnSearch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Buscar"
-        app:layout_constraintTop_toBottomOf="@id/textSearch"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_margin="16dp" />
-
-    <!-- Botón original para mostrar las películas populares -->
-    <Button
-        android:id="@+id/btnGetPopular"
-        android:layout_width="wrap_content"
+        android:id="@+id/buttonPopularMovies"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Películas Populares"
-        app:layout_constraintTop_toBottomOf="@id/btnSearch"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_margin="16dp" />
+        >
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </Button>
+
+    <Button
+        android:id="@+id/buttonSearchMovie"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Buscar Película"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/textViewResults"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:paddingTop="16dp" />
+
+</LinearLayout>

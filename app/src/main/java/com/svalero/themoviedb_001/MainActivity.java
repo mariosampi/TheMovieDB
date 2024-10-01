@@ -1,22 +1,17 @@
 package com.svalero.themoviedb_001;
 
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.svalero.themoviedb_001.json_mapper.Movie;
 import com.svalero.themoviedb_001.json_mapper.MovieResponse;
+import com.svalero.themoviedb_001.movies_api.MoviesAPI;
 import com.svalero.themoviedb_001.retrofit.RetrofitClient;
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -24,70 +19,84 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String API_KEY = "a4baafc5fd87ddc79d6c8548a8559b9d";  // Reemplaza con tu API key real
-
+    private static final String TAG = "MainActivity";
+    private static final String API_KEY = "TU_API_KEY"; // Reemplaza con tu API Key
+    private MoviesAPI api; // Cambiado de Movie a MoviesAPI
+    private TextView textViewResults; // TextView para mostrar resultados
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button btnGetPopular = findViewById(R.id.btnGetPopular);
+        api = RetrofitClient.getInstance(); // Inicializa correctamente la interfaz
 
-        btnGetPopular.setOnClickListener(new View.OnClickListener(){
+        textViewResults = findViewById(R.id.textViewResults); // Inicializa el TextView
+
+        Button buttonPopularMovies = findViewById(R.id.buttonPopularMovies);
+        Button buttonSearchMovie = findViewById(R.id.buttonSearchMovie);
+
+        buttonPopularMovies.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
-                Call<MovieResponse> call = RetrofitClient.getInstance().getPopularMovies();
-                call.enqueue(new Callback<MovieResponse>() {
-                    @Override
-                    public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
-                        if (response.isSuccessful()) {
-                            List<Movie> movies = response.body().getResults();
-                            // Procesa y muestra las películas aquí
-                            for (Movie myMovie:movies
-                            ) {
-                                Toast.makeText(MainActivity.this, "Movie:" + myMovie.getTitle(), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<MovieResponse> call, Throwable t) {
-                        Toast.makeText(MainActivity.this, "Error al obtener las películas", Toast.LENGTH_SHORT).show();
-                    }
-                });
+            public void onClick(View v) {
+                fetchPopularMovies();
             }
         });
 
-        EditText textSearch = findViewById(R.id.textSearch);
-        Button btnSearch = findViewById(R.id.btnSearch);
-
-        btnSearch.setOnClickListener(new View.OnClickListener() {
+        buttonSearchMovie.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String query = textSearch.getText().toString();
+                searchMovie("titanic"); // Puedes cambiar esto a cualquier película
+            }
+        });
+    }
 
-                // Realiza la llamada a la API cuando se hace clic en el botón de búsqueda
-                Call<MovieResponse> call = RetrofitClient.getInstance().searchMovies(API_KEY);
-                call.enqueue(new Callback<MovieResponse>() {
-                    @Override
-                    public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
-                        if (response.isSuccessful()) {
-                            List<Movie> movies = response.body().getResults();
-                            // Procesa y muestra las películas aquí
-                            for (Movie myMovie : movies) {
-                                Toast.makeText(MainActivity.this, "Movie: " + myMovie.getTitle(), Toast.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            Toast.makeText(MainActivity.this, "No se encontraron resultados", Toast.LENGTH_SHORT).show();
-                        }
+    private void fetchPopularMovies() {
+        Call<MovieResponse> call = api.getPopularMovies(API_KEY, "es-ES", 1);
+        call.enqueue(new Callback<MovieResponse>() {
+            @Override
+            public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    StringBuilder moviesList = new StringBuilder(); // Para almacenar títulos
+                    for (Movie movie : response.body().getResults()) {
+                        moviesList.append(movie.getTitle()).append("\n"); // Agregar títulos a la lista
+                        Log.d(TAG, "Película Popular: " + movie.getTitle());
                     }
+                    textViewResults.setText(moviesList.toString()); // Mostrar títulos en el TextView
+                    Toast.makeText(MainActivity.this, "Películas populares cargadas", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.e(TAG, "Error en la respuesta: " + response.code());
+                }
+            }
 
-                    @Override
-                    public void onFailure(Call<MovieResponse> call, Throwable t) {
-                        Toast.makeText(MainActivity.this, "Error al buscar películas", Toast.LENGTH_SHORT).show();
+            @Override
+            public void onFailure(Call<MovieResponse> call, Throwable t) {
+                Log.e(TAG, "Fallo en la llamada: " + t.getMessage());
+            }
+        });
+    }
+
+    private void searchMovie(String query) {
+        Call<MovieResponse> call = api.searchMovie(API_KEY, "es-ES", query, 1);
+        call.enqueue(new Callback<MovieResponse>() {
+            @Override
+            public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    StringBuilder moviesList = new StringBuilder(); // Para almacenar títulos
+                    for (Movie movie : response.body().getResults()) {
+                        moviesList.append(movie.getTitle()).append("\n"); // Agregar títulos a la lista
+                        Log.d(TAG, "Resultado de búsqueda: " + movie.getTitle());
                     }
-                });
+                    textViewResults.setText(moviesList.toString()); // Mostrar títulos en el TextView
+                    Toast.makeText(MainActivity.this, "Búsqueda completada", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.e(TAG, "Error en la respuesta: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MovieResponse> call, Throwable t) {
+                Log.e(TAG, "Fallo en la llamada: " + t.getMessage());
             }
         });
     }
