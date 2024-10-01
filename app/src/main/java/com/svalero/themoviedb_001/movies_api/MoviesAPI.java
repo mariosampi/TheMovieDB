@@ -17,5 +17,7 @@ public interface MoviesAPI {
     );
 
     @GET("search/movie")
-    Call<MovieResponse> searchMovies(String apiKey);
+    Call<MovieResponse> searchMovies(
+            @Query("api_key") String apiKey,
+            @Query("query") String query);
 }
