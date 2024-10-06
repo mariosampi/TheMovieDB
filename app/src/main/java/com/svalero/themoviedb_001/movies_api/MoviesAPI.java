@@ -25,4 +25,11 @@ public interface MoviesAPI {
             @Query("query") String query,
             @Query("page") int page
     );
+
+    @GET("movie/{movie_id}?api_key=a4baafc5fd87ddc79d6c8548a8559b9d")
+    Call<Movie> getMovieDetails(
+            @Path("movie_id") int movieId,
+            @Query("api_key") String apiKey,
+            @Query("language") String language
+    );
 }

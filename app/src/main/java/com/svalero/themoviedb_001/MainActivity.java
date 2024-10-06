@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button buttonPopularMovies = findViewById(R.id.buttonPopularMovies);
         Button buttonSearchMovie = findViewById(R.id.buttonSearchMovie);
+        Button buttonMovieDetails = findViewById(R.id.buttonMovieDetails);
 
         buttonPopularMovies.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,6 +48,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 searchMovie("titanic"); // Puedes cambiar esto a cualquier película
+            }
+        });
+
+        buttonMovieDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getMovieDetails(550); // ID de "Fight Club"
             }
         });
     }
@@ -96,6 +104,29 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<MovieResponse> call, Throwable t) {
+                Log.e(TAG, "Fallo en la llamada: " + t.getMessage());
+            }
+        });
+    }
+
+    private void getMovieDetails(int movieId) {
+        Call<Movie> call = api.getMovieDetails(movieId, API_KEY, "es-ES");
+        call.enqueue(new Callback<Movie>() {
+            @Override
+            public void onResponse(Call<Movie> call, Response<Movie> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Movie movie = response.body();
+                    String movieDetails = "Título: " + movie.getTitle() + "\n\n" + " Sipnopsis: " + movie.getOverview();
+                    Log.d(TAG, "Detalles de la película: " + movie.getTitle() + " - " + movie.getOverview());
+                    textViewResults.setText(movieDetails);
+                    Toast.makeText(MainActivity.this, "Detalles de película cargados", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.e(TAG, "Error en la respuesta: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Movie> call, Throwable t) {
                 Log.e(TAG, "Fallo en la llamada: " + t.getMessage());
             }
         });
